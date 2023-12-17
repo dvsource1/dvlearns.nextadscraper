@@ -1,5 +1,4 @@
-import axios from 'axios'
-import * as cheerio from 'cheerio'
+import scrapeRiyasewana from 'dvlearns/scrapper/sources/scrapeRiyasewanaCOM'
 
 export const GET = async (request: Request) => {
   const { searchParams } = new URL(request.url)
@@ -10,19 +9,10 @@ export const GET = async (request: Request) => {
       error: 'Missing baseURL',
     })
   }
-  const response = await axios.get(baseURL)
-  const $ = cheerio.load(response.data)
 
-  // get all the links
-  const links = $('a')
-    .map((i, el) => {
-      const href = $(el).attr('href')
-      const text = $(el).text()
-      return { href, text }
-    })
-    .get()
+  const vehicles = await scrapeRiyasewana(baseURL, true)
 
   return Response.json({
-    links,
+    vehicles,
   })
 }
